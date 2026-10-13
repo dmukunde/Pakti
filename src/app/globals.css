@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/*
+  Pakti design tokens. Calm, warm and mature: paper background, deep sage
+  primary, no red anywhere. "Below" uses a soft amber so a missed minimum
+  reads as information, not alarm.
+*/
+:root {
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --surface-muted: #efece5;
+  --ink: #1f2a27;
+  --ink-muted: #5e6b66;
+  --line: #e2ded5;
+  --primary: #2f5d50;
+  --primary-ink: #ffffff;
+  --primary-soft: #e3ece8;
+  --achieved: #2f7a5b;
+  --within: #8a7a2e;
+  --below: #b4703a;
+  --focus: #3d7a68;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141917;
+    --surface: #1c2320;
+    --surface-muted: #232b28;
+    --ink: #e8ece9;
+    --ink-muted: #a2ada8;
+    --line: #2e3834;
+    --primary: #8bc1ae;
+    --primary-ink: #10201a;
+    --primary-soft: #213430;
+    --achieved: #7cc4a2;
+    --within: #d6c27a;
+    --below: #e0a472;
+    --focus: #8bc1ae;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary-soft: var(--primary-soft);
+  --color-achieved: var(--achieved);
+  --color-within: var(--within);
+  --color-below: var(--below);
+  --color-focus: var(--focus);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
