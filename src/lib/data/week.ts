@@ -3,8 +3,6 @@ import type { LifeCapital } from "@/lib/domain/capitals";
 import { addDays, weekEnd, type IsoDate } from "@/lib/domain/dates";
 import type { GoalKind } from "@/lib/domain/goals";
 import {
-  commitmentActual,
-  commitmentResult,
   resultLabel,
   tally,
   type CommitmentLike,
@@ -48,15 +46,17 @@ export async function getWeekPlan(week: IsoDate, today: IsoDate): Promise<WeekPl
     .order("created_at");
   const raw = ((data ?? []) as unknown as RawCommitment[]).filter((c) => c.goal);
 
+  // Results come from the one shared calculation (public.commitment_progress).
   const ids = raw.map((c) => c.id);
-  const logs = ids.length
-    ? ((await supabase.from("activity_logs").select("commitment_id, amount").in("commitment_id", ids)).data ?? [])
+  const progress = ids.length
+    ? ((await supabase.from("commitment_progress").select("id, actual, result").in("id", ids)).data ?? [])
     : [];
+  const byId = new Map(progress.map((p) => [p.id, p]));
 
   const weekEnded = today > weekEnd(week);
   const commitments = raw.map((c) => {
-    const actual = commitmentActual(c, logs);
-    const result = commitmentResult(c, actual);
+    const actual = Number(byId.get(c.id)?.actual ?? 0);
+    const result = (byId.get(c.id)?.result ?? "below") as Result;
     return {
       ...c,
       goal: c.goal!,
@@ -76,19 +76,14 @@ export async function getUnfinishedFrom(week: IsoDate, today: IsoDate): Promise<
   return previous.commitments.filter((c) => c.result !== "achieved");
 }
 
-/** Goal commitments across a range of weeks, with their linked logs (for focus dots). */
-export async function getGoalCommitments(goalId: string, from: IsoDate, to: IsoDate) {
+/** Commitment results for one goal across a range of weeks (for focus dots). */
+export async function getGoalWeekResults(goalId: string, from: IsoDate, to: IsoDate) {
   const supabase = await createClient();
   const { data } = await supabase
-    .from("commitments")
-    .select("id, goal_id, week_start, title, measure, unit, target_value, minimum_value")
+    .from("commitment_progress")
+    .select("week_start, result")
     .eq("goal_id", goalId)
     .gte("week_start", from)
     .lte("week_start", to);
-  const commitments = (data ?? []) as CommitmentLike[];
-  const ids = commitments.map((c) => c.id);
-  const logs = ids.length
-    ? ((await supabase.from("activity_logs").select("commitment_id, amount").in("commitment_id", ids)).data ?? [])
-    : [];
-  return { commitments, logs };
+  return (data ?? []) as Array<{ week_start: IsoDate; result: Result }>;
 }

@@ -5,16 +5,22 @@ export type CardProps = HTMLAttributes<HTMLElement> & {
   title?: ReactNode;
   eyebrow?: ReactNode;
   emphasis?: boolean;
+  /** A sunny card for rewards and celebrations. */
+  reward?: boolean;
 };
 
 // The basic surface for Home and detail screens. `emphasis` is reserved for
 // the one card that matters most on a screen (e.g. My Big Goal).
-export function Card({ title, eyebrow, emphasis, className, children, ...props }: CardProps) {
+export function Card({ title, eyebrow, emphasis, reward, className, children, ...props }: CardProps) {
   return (
     <section
       className={cn(
         "rounded-2xl border p-5",
-        emphasis ? "border-primary/30 bg-primary-soft" : "border-line bg-surface",
+        emphasis
+          ? "border-primary/25 bg-gradient-to-br from-primary-soft via-surface to-sun-soft"
+          : reward
+            ? "border-sun/50 bg-gradient-to-br from-sun-soft to-accent-soft"
+            : "border-line bg-surface",
         className,
       )}
       {...props}

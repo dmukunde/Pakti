@@ -1,5 +1,6 @@
-// Weekly loop rules (architecture section 8). Commitment results come only
-// from logs linked to that commitment; nothing is stored.
+// Weekly loop rules (architecture section 8). Commitment results themselves
+// (achieved / within / below) are calculated once, in the database view
+// public.commitment_progress, so the app and published check-ins always agree.
 import { addDays, weekEnd, type IsoDate } from "./dates";
 import { formatAmount } from "./format";
 
@@ -22,24 +23,6 @@ export type CommitmentLike = {
   target_value: number | null;
   minimum_value: number | null;
 };
-
-export type LinkedLog = { commitment_id: string | null; amount: number | null };
-
-/** Done-type: number of linked logs. Quantity: sum of amounts (a log without one counts as 1). */
-export function commitmentActual(c: CommitmentLike, logs: LinkedLog[]): number {
-  const mine = logs.filter((l) => l.commitment_id === c.id);
-  if (c.measure === "done") return mine.length;
-  return mine.reduce((sum, l) => sum + (l.amount ?? 1), 0);
-}
-
-export function commitmentResult(c: CommitmentLike, actual: number): Result {
-  if (c.measure === "done") return actual >= 1 ? "achieved" : "below";
-  const target = c.target_value ?? 0;
-  const minimum = c.minimum_value ?? target;
-  if (actual >= target) return "achieved";
-  if (actual >= minimum) return "within";
-  return "below";
-}
 
 /** Short status text. While the week is running, "below" is just "not yet". */
 export function resultLabel(c: CommitmentLike, actual: number, result: Result, weekEnded: boolean, goalUnit: string | null): string {
@@ -114,13 +97,12 @@ export type FocusDot = "kept" | "some" | "missed" | "not_in_focus" | "upcoming";
 export function focusDot(
   week: IsoDate,
   currentWeek: IsoDate,
-  commitments: CommitmentLike[],
-  logs: LinkedLog[],
+  results: Array<{ week_start: IsoDate; result: Result }>,
 ): FocusDot {
   if (week > currentWeek) return "upcoming";
-  const mine = commitments.filter((c) => c.week_start === week);
+  const mine = results.filter((r) => r.week_start === week);
   if (mine.length === 0) return "not_in_focus";
-  const kept = mine.filter((c) => commitmentResult(c, commitmentActual(c, logs)) !== "below").length;
+  const kept = mine.filter((r) => r.result !== "below").length;
   if (kept === mine.length) return "kept";
   if (week === currentWeek) return kept > 0 ? "some" : "not_in_focus";
   return kept > 0 ? "some" : "missed";

@@ -33,7 +33,12 @@ export function CommitmentList({ items, weekEnded }: { items: CommitmentItem[]; 
           <button
             type="button"
             onClick={() => openLog({ commitmentId: c.id })}
-            className="flex w-full flex-col gap-2 rounded-2xl border border-line bg-surface p-4 text-left transition-colors hover:border-primary/40"
+            className={cn(
+              "flex w-full flex-col gap-2 rounded-2xl border p-4 text-left transition-colors hover:border-primary/40",
+              c.result === "achieved"
+                ? "border-achieved/30 bg-gradient-to-br from-primary-soft to-sun-soft"
+                : "border-line bg-surface",
+            )}
             aria-label={`${c.title}. ${c.label}. Tap to log progress.`}
           >
             <span className="flex items-start justify-between gap-3">
@@ -67,6 +72,7 @@ export function CommitmentList({ items, weekEnded }: { items: CommitmentItem[]; 
                   c.result === "below" && (weekEnded ? "text-below" : "text-ink-muted"),
                 )}
               >
+                {c.result === "achieved" && <span aria-hidden>✓ </span>}
                 {c.measure === "quantity" && c.target_value !== null
                   ? `${formatProgress(c.actual, c.target_value, c.displayUnit)} · ${c.label}`
                   : c.label}

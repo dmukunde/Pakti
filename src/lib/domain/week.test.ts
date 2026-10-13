@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  commitmentActual,
-  commitmentResult,
   focusDot,
   habitWeekResult,
   isRecoveryWeek,
@@ -25,35 +23,10 @@ const c = (over: Partial<CommitmentLike>): CommitmentLike => ({
   minimum_value: 2,
   ...over,
 });
-const log = (commitment_id: string | null, amount: number | null = null) => ({ commitment_id, amount });
 
-describe("commitment results", () => {
-  it("distinguishes achieved, within minimum and below (architecture example)", () => {
-    const exercise = c({});
-    expect(commitmentResult(exercise, 3)).toBe("achieved");
-    expect(commitmentResult(exercise, 2)).toBe("within");
-    expect(commitmentResult(exercise, 1)).toBe("below");
-  });
-
-  it("treats a missing minimum as the target", () => {
-    expect(commitmentResult(c({ minimum_value: null }), 2)).toBe("below");
-  });
-
-  it("counts only logs linked to the commitment", () => {
-    const logs = [log("c1"), log("c1"), log("c2"), log(null)];
-    expect(commitmentActual(c({}), logs)).toBe(2);
-  });
-
-  it("sums amounts for quantity commitments", () => {
-    expect(commitmentActual(c({ target_value: 250000 }), [log("c1", 100000), log("c1", 150000)])).toBe(250000);
-  });
-
-  it("done-type commitments are achieved by any linked log", () => {
-    const done = c({ measure: "done", target_value: null, minimum_value: null });
-    expect(commitmentResult(done, 0)).toBe("below");
-    expect(commitmentResult(done, 1)).toBe("achieved");
-  });
-
+describe("result wording", () => {
+  // The results themselves are calculated in public.commitment_progress and
+  // covered by supabase/tests/database/05_checkins_invites.test.sql.
   it("speaks gently while the week is running", () => {
     const exercise = c({});
     expect(resultLabel(exercise, 0, "below", false, "sessions")).toBe("2 sessions to your minimum");
@@ -107,11 +80,11 @@ describe("dates and focus", () => {
   });
 
   it("never marks an out-of-focus week as missed", () => {
-    const commitments = [c({ week_start: week })];
-    expect(focusDot("2027-01-11", "2027-01-18", commitments, [])).toBe("not_in_focus");
-    expect(focusDot(week, "2027-01-18", commitments, [])).toBe("missed");
-    expect(focusDot(week, "2027-01-18", commitments, [log("c1"), log("c1")])).toBe("kept");
-    expect(focusDot("2027-01-25", "2027-01-18", commitments, [])).toBe("upcoming");
+    expect(focusDot("2027-01-11", "2027-01-18", [{ week_start: week, result: "below" }])).toBe("not_in_focus");
+    expect(focusDot(week, "2027-01-18", [{ week_start: week, result: "below" }])).toBe("missed");
+    expect(focusDot(week, "2027-01-18", [{ week_start: week, result: "within" }])).toBe("kept");
+    expect(focusDot(week, "2027-01-18", [{ week_start: week, result: "achieved" }, { week_start: week, result: "below" }])).toBe("some");
+    expect(focusDot("2027-01-25", "2027-01-18", [])).toBe("upcoming");
   });
 
   it("judges habit weeks against target and minimum", () => {

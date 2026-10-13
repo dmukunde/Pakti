@@ -68,7 +68,8 @@ export async function signUpWithPassword(_prev: SignInState, formData: FormData)
   // With "Confirm email" off in Supabase, sign-up starts a session at once.
   // If it's ever switched back on, the member is asked to confirm first.
   if (!data.session) return { status: "sent", email: email.data };
-  redirect("/onboarding");
+  // New members onboard, unless they came from somewhere (e.g. an invite link).
+  redirect(safeNextPath(String(formData.get("next") ?? ""), "/onboarding"));
 }
 
 export async function sendPasswordReset(_prev: SignInState, formData: FormData): Promise<SignInState> {

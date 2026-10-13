@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { ProgressLine } from "@/components/ui/progress-line";
 import { requireOnboardedMember } from "@/lib/auth/current-member";
 import { listGoals, type GoalSummary } from "@/lib/data/goals";
+import { getPartnerCheckins, getPartnerships, getWeeklyReflection } from "@/lib/data/checkins";
 import { getWeekPlan } from "@/lib/data/week";
 import { capitalLabel } from "@/lib/domain/capitals";
 import { addDays, weekEnd, weekStart } from "@/lib/domain/dates";
@@ -34,14 +35,33 @@ function nextReward(goals: GoalSummary[]) {
   return big ? { goal: big, kind: "goal" as const } : null;
 }
 
+function GiftIcon() {
+  return (
+    <svg aria-hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3.5" y="9" width="17" height="11" rx="2" />
+      <path d="M3.5 13h17M12 9v11M12 9c-1.5-3.5-6-4-6-1.5S10 9 12 9Zm0 0c1.5-3.5 6-4 6-1.5S14 9 12 9Z" />
+    </svg>
+  );
+}
+
 async function ThisWeek() {
   const member = await requireOnboardedMember();
   const week = weekStart(member.today);
-  const [plan, lastWeek, allGoals] = await Promise.all([
+  const [plan, lastWeek, allGoals, thisCheckin, lastCheckin, partnerships, shared] = await Promise.all([
     getWeekPlan(week, member.today),
     getWeekPlan(addDays(week, -7), member.today),
     listGoals(member.today),
+    getWeeklyReflection(week),
+    getWeeklyReflection(addDays(week, -7)),
+    getPartnerships(),
+    getPartnerCheckins(),
   ]);
+  // Check-in prompts: from Friday for this week; Monday and Tuesday for last week.
+  const dayOfWeek = (Date.parse(member.today) - Date.parse(week)) / 864e5 + 1; // Mon=1 .. Sun=7
+  const checkInThisWeek = dayOfWeek >= 5 && !thisCheckin && plan.tally.total > 0;
+  const checkInLastWeek = dayOfWeek <= 2 && !lastCheckin && lastWeek.tally.total > 0;
+  const hasPartner = partnerships.some((p) => p.role === "supports_me");
+  const recentShare = shared.find((c) => Date.parse(member.today) - Date.parse(c.published_at.slice(0, 10)) <= 7 * 864e5);
   const goals = allGoals.filter((g) => g.status === "active");
   const big = goals.find((g) => g.is_primary);
   const inFocus = new Set(plan.commitments.map((c) => c.goal_id));
@@ -70,6 +90,18 @@ async function ThisWeek() {
         <p className="mt-1 text-ink-muted">Week of {formatDate(week)}</p>
         <p className="mt-2 font-medium">{weekStateLine(plan.tally, member.today, week)}</p>
       </div>
+
+      {(checkInThisWeek || checkInLastWeek) && (
+        <Card emphasis title={checkInLastWeek ? "How did last week go?" : "Time for your weekly check-in"}>
+          <p className="text-ink-muted">A few honest lines: wins, challenges, what you learned.</p>
+          <Link
+            href={checkInLastWeek ? "/week/check-in?week=last" : "/week/check-in"}
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:opacity-90"
+          >
+            Check in
+          </Link>
+        </Card>
+      )}
 
       {recovery && (
         <Card eyebrow="A new week" title="Last week was a hard one. That's part of it.">
@@ -165,7 +197,15 @@ async function ThisWeek() {
       )}
 
       {reward && (
-        <Card eyebrow="Next reward" title={reward.kind === "milestone" ? reward.goal.milestone!.reward! : reward.goal.reward!}>
+        <Card
+          reward
+          eyebrow={
+            <span className="inline-flex items-center gap-1.5 font-medium text-ink">
+              <GiftIcon /> Next reward
+            </span>
+          }
+          title={reward.kind === "milestone" ? reward.goal.milestone!.reward! : reward.goal.reward!}
+        >
           <div className="flex flex-col gap-2">
             <p className="text-sm text-ink-muted">
               {reward.kind === "milestone"
@@ -183,6 +223,28 @@ async function ThisWeek() {
             })()}
           </div>
         </Card>
+      )}
+
+      {recentShare && (
+        <Link href={`/partners/${recentShare.member_id}`} className="block rounded-2xl border border-line bg-surface px-4 py-3 text-sm">
+          <span className="font-medium">{recentShare.member_display_name || "Your partner"}</span> shared a check-in.{" "}
+          <span className="text-primary">Say something encouraging</span>
+        </Link>
+      )}
+
+      {!hasPartner && goals.length > 0 && (
+        <p className="text-sm text-ink-muted">
+          Accountability works best with someone in your corner.{" "}
+          <Link href="/partners" className="font-medium text-primary">
+            Invite a partner
+          </Link>
+        </p>
+      )}
+
+      {!checkInThisWeek && plan.tally.total > 0 && (
+        <Link href="/week/check-in" className="inline-flex min-h-11 items-center text-sm text-primary">
+          {thisCheckin ? "Edit this week’s check-in" : "Check in early"}
+        </Link>
       )}
 
       <InstallHint />

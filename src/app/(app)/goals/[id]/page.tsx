@@ -11,7 +11,7 @@ import { ProgressLine } from "@/components/ui/progress-line";
 import { requireOnboardedMember } from "@/lib/auth/current-member";
 import { getEvidenceForLogs } from "@/lib/data/evidence";
 import { getGoal } from "@/lib/data/goals";
-import { getGoalCommitments, getWeekPlan } from "@/lib/data/week";
+import { getGoalWeekResults, getWeekPlan } from "@/lib/data/week";
 import { cn } from "@/lib/cn";
 import { capitalLabel } from "@/lib/domain/capitals";
 import { addDays, quarterEnd, quarterLabel, quarterStart, weekEnd, weekStart } from "@/lib/domain/dates";
@@ -62,10 +62,10 @@ async function GoalDetailView({
   for (let w = weekStart(qStart); w <= quarterEnd(qStart); w = addDays(w, 7)) weeks.push(w);
   const [plan, focus, evidence] = await Promise.all([
     getWeekPlan(currentWeek, member.today),
-    getGoalCommitments(goal.id, weeks[0], weeks[weeks.length - 1]),
+    getGoalWeekResults(goal.id, weeks[0], weeks[weeks.length - 1]),
     getEvidenceForLogs(goal.recentLogs.map((l) => l.id)),
   ]);
-  const dots = weeks.map((w) => ({ week: w, dot: focusDot(w, currentWeek, focus.commitments, focus.logs) }));
+  const dots = weeks.map((w) => ({ week: w, dot: focusDot(w, currentWeek, focus) }));
 
   // Habits: consistency over completed weeks that were in focus (never a streak).
   const focusWeeks = dots.filter((d) => d.week < currentWeek && d.dot !== "not_in_focus" && d.dot !== "upcoming");

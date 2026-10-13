@@ -1,42 +1,51 @@
 @import "tailwindcss";
 
 /*
-  Pakti design tokens. Calm, warm and mature: paper background, deep sage
-  primary, no red anywhere. "Below" uses a soft amber so a missed minimum
-  reads as information, not alarm.
+  Pakti design tokens. Bright and encouraging, never alarming: warm cream
+  background, fresh teal primary, coral and sunshine accents for moments of
+  joy. There is no red: "below" is a warm coral so a missed minimum reads as
+  information, not failure. Text colours keep WCAG AA contrast.
 */
 :root {
-  --bg: #f7f5f0;
+  --bg: #fff8ef;
   --surface: #ffffff;
-  --surface-muted: #efece5;
-  --ink: #1f2a27;
-  --ink-muted: #5e6b66;
-  --line: #e2ded5;
-  --primary: #2f5d50;
+  --surface-muted: #f7efe3;
+  --ink: #1d2433;
+  --ink-muted: #586176;
+  --line: #efe3d3;
+  --primary: #0b7a64;
   --primary-ink: #ffffff;
-  --primary-soft: #e3ece8;
-  --achieved: #2f7a5b;
-  --within: #8a7a2e;
-  --below: #b4703a;
-  --focus: #3d7a68;
+  --primary-soft: #dcf4ec;
+  --accent: #ff7a59;
+  --accent-soft: #ffe7de;
+  --sun: #ffc23d;
+  --sun-soft: #fff1cc;
+  --achieved: #10854f;
+  --within: #9a6a00;
+  --below: #c2532d;
+  --focus: #0b7a64;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #141917;
-    --surface: #1c2320;
-    --surface-muted: #232b28;
-    --ink: #e8ece9;
-    --ink-muted: #a2ada8;
-    --line: #2e3834;
-    --primary: #8bc1ae;
-    --primary-ink: #10201a;
-    --primary-soft: #213430;
-    --achieved: #7cc4a2;
-    --within: #d6c27a;
-    --below: #e0a472;
-    --focus: #8bc1ae;
+    --bg: #12161f;
+    --surface: #1a2030;
+    --surface-muted: #232a3b;
+    --ink: #eef1f7;
+    --ink-muted: #a4adbf;
+    --line: #2c3446;
+    --primary: #4fd1ae;
+    --primary-ink: #06261e;
+    --primary-soft: #153a32;
+    --accent: #ff9478;
+    --accent-soft: #3a2420;
+    --sun: #ffd166;
+    --sun-soft: #3a3018;
+    --achieved: #5fdc98;
+    --within: #f2c24d;
+    --below: #ff9a73;
+    --focus: #4fd1ae;
     color-scheme: dark;
   }
 }
@@ -51,6 +60,10 @@
   --color-primary: var(--primary);
   --color-primary-ink: var(--primary-ink);
   --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-sun: var(--sun);
+  --color-sun-soft: var(--sun-soft);
   --color-achieved: var(--achieved);
   --color-within: var(--within);
   --color-below: var(--below);

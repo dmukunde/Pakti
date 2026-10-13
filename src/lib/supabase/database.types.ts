@@ -39,6 +39,12 @@ export type Database = {
       foreignKeyName: "activity_logs_commitment_fk"
       columns: ["commitment_id","goal_id","user_id"]
 isOneToOne: false
+      referencedRelation: "commitment_progress"
+      referencedColumns: ["id","goal_id","user_id"]
+    },{
+      foreignKeyName: "activity_logs_commitment_fk"
+      columns: ["commitment_id","goal_id","user_id"]
+isOneToOne: false
       referencedRelation: "commitments"
       referencedColumns: ["id","goal_id","user_id"]
     },{
@@ -207,14 +213,14 @@ isOneToOne: false
                   ]
                 },"partnerships": {
                   Row: {
-                    "accepted_at": string | null,"created_at": string,"ended_at": string | null,"id": string,"invite_email": string,"invite_expires_at": string,"invite_token_hash": string,"member_id": string,"partner_id": string | null,"status": string
+                    "accepted_at": string | null,"created_at": string,"ended_at": string | null,"id": string,"invite_email": string | null,"invite_expires_at": string,"invite_label": string | null,"invite_token_hash": string,"member_id": string,"partner_id": string | null,"status": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "accepted_at"?: string | null,"created_at"?: string,"ended_at"?: string | null,"id"?: string,"invite_email": string,"invite_expires_at"?: string,"invite_token_hash": string,"member_id"?: string,"partner_id"?: string | null,"status"?: string
+                    "accepted_at"?: string | null,"created_at"?: string,"ended_at"?: string | null,"id"?: string,"invite_email"?: string | null,"invite_expires_at"?: string,"invite_label"?: string | null,"invite_token_hash": string,"member_id"?: string,"partner_id"?: string | null,"status"?: string
                   }
                   Update: {
-                    "accepted_at"?: string | null,"created_at"?: string,"ended_at"?: string | null,"id"?: string,"invite_email"?: string,"invite_expires_at"?: string,"invite_token_hash"?: string,"member_id"?: string,"partner_id"?: string | null,"status"?: string
+                    "accepted_at"?: string | null,"created_at"?: string,"ended_at"?: string | null,"id"?: string,"invite_email"?: string | null,"invite_expires_at"?: string,"invite_label"?: string | null,"invite_token_hash"?: string,"member_id"?: string,"partner_id"?: string | null,"status"?: string
                   }
                   Relationships: [
                     {
@@ -268,7 +274,27 @@ isOneToOne: false
                 }
           }
           Views: {
-            [_ in never]: never
+            "commitment_progress": {
+                  Row: {
+                    "actual": number | null,"goal_id": string | null,"id": string | null,"result": string | null,"user_id": string | null,"week_start": string | null
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    {
+      foreignKeyName: "commitments_goal_fk"
+      columns: ["goal_id","user_id"]
+isOneToOne: false
+      referencedRelation: "goals"
+      referencedColumns: ["id","user_id"]
+    },{
+      foreignKeyName: "commitments_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                }
           }
           Functions: {
             "accept_partner_invite":
@@ -280,6 +306,11 @@ isOneToOne: false
 "end_partnership":
 { Args: { "p_partnership_id": string }; Returns: undefined
                            },
+"invite_preview":
+{ Args: { "p_token": string }; Returns: {
+              "invited_email": string,"inviter_name": string,"valid": boolean
+            }[]
+                           },
 "is_quarter_start":
 { Args: { "d": string }; Returns: boolean
                            },
@@ -288,13 +319,16 @@ isOneToOne: false
                            },
 "my_partnerships":
 { Args: Record<PropertyKey, never>; Returns: {
-              "accepted_at": string,"created_at": string,"invite_email": string,"invite_expires_at": string,"other_display_name": string,"other_user_id": string,"partnership_id": string,"role": string,"status": string
+              "accepted_at": string,"created_at": string,"invite_email": string,"invite_expires_at": string,"invite_label": string,"other_display_name": string,"other_user_id": string,"partnership_id": string,"role": string,"status": string
             }[]
                            },
 "partner_checkins":
 { Args: { "p_member_id"?: string }; Returns: {
               "member_display_name": string,"member_id": string,"period_start": string,"period_type": string,"published_at": string,"reflection_id": string,"snapshot": Json
             }[]
+                           },
+"publish_checkin":
+{ Args: { "p_commitment_ids": (string)[],"p_reflection_id": string }; Returns: undefined
                            },
 "unpublish_checkin":
 { Args: { "p_reflection_id": string }; Returns: undefined

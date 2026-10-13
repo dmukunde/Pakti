@@ -3,7 +3,8 @@ import { updateSession } from "@/lib/supabase/proxy";
 
 // Paths a signed-out visitor may open. Everything else requires a session.
 // /styleguide is development-only (the page 404s in production).
-const PUBLIC_PATHS = ["/", "/sign-in", "/auth/confirm", "/styleguide"];
+// /invite/<token> shows who sent an invite before the person signs in.
+const PUBLIC_PATHS = ["/", "/sign-in", "/auth/confirm", "/styleguide", "/invite"];
 
 function isPublic(pathname: string) {
   return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));

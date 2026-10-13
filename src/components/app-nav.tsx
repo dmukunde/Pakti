@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 const TABS = [
   { href: "/week", label: "This Week", icon: WeekIcon },
   { href: "/goals", label: "Goals", icon: GoalsIcon },
+  { href: "/partners", label: "Partners", icon: PartnersIcon },
 ] as const;
 
 // Bottom navigation on phones, a top bar from small tablets up. Reading the
@@ -39,7 +40,9 @@ function NavTabs({ pathname }: { pathname: string }) {
                   active ? "text-primary" : "text-ink-muted hover:text-ink",
                 )}
               >
-                <Icon />
+                <span className={cn("grid h-8 w-14 place-items-center rounded-full transition-colors sm:h-auto sm:w-auto", active && "bg-primary-soft sm:bg-transparent")}>
+                  <Icon />
+                </span>
                 {label}
               </Link>
             </li>
@@ -65,6 +68,16 @@ function GoalsIcon() {
       <circle cx="12" cy="12" r="8.5" />
       <circle cx="12" cy="12" r="4.5" />
       <circle cx="12" cy="12" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function PartnersIcon() {
+  return (
+    <svg aria-hidden width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <circle cx="9" cy="8.5" r="3.2" />
+      <circle cx="16.5" cy="9.5" r="2.6" />
+      <path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8M14.5 14.6c.6-.2 1.3-.3 2-.3 2.2 0 3.9 1.4 4.4 3.9" strokeLinecap="round" />
     </svg>
   );
 }
