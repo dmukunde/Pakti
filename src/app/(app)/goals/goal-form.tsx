@@ -46,7 +46,7 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
   const [state, action, pending] = useActionState<GoalFormState, FormData>(saveGoal, {});
   const [capital, setCapital] = useState<LifeCapital | undefined>(values.capital);
   const [kind, setKind] = useState<GoalKind | undefined>(values.kind);
-  const [unit, setUnit] = useState(values.unit || "UGX");
+  const [unit, setUnit] = useState(values.unit);
   const [target, setTarget] = useState(values.target_value);
   const [targetDate, setTargetDate] = useState(values.target_date);
   const [shared, setShared] = useState(values.shared_with_partners);
@@ -137,15 +137,24 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
             <Input id="g-target" name="target_value" inputMode="decimal" value={target} onChange={(e) => setTarget(e.target.value)} aria-invalid={Boolean(err.target_value)} />
           </Field>
           <Field id="g-unit" label="Unit" error={err.unit}>
-            <Input id="g-unit" name="unit" value={unit} onChange={(e) => setUnit(e.target.value)} maxLength={30} list="unit-suggestions" aria-invalid={Boolean(err.unit)} />
+            <Input id="g-unit" name="unit" value={unit} onChange={(e) => setUnit(e.target.value)} maxLength={30} list="unit-suggestions" placeholder="UGX, kg…" aria-invalid={Boolean(err.unit)} />
           </Field>
           <datalist id="unit-suggestions">
             <option value="UGX" />
+            <option value="kg" />
             <option value="USD" />
             <option value="km" />
             <option value="pages" />
             <option value="modules" />
           </datalist>
+          {/* Phones rarely show datalist suggestions, so offer quick picks too. */}
+          <div className="col-span-2 -mt-1 flex flex-wrap gap-2" aria-label="Common units">
+            {["UGX", "kg", "km", "pages", "modules"].map((u) => (
+              <Chip key={u} selected={unit === u} onClick={() => setUnit(u)} className="min-h-9">
+                {u}
+              </Chip>
+            ))}
+          </div>
         </div>
       )}
 

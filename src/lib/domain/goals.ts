@@ -9,9 +9,9 @@ export type CheckinStatus = "growing" | "steady" | "needs_attention" | "done";
 export const GOAL_KINDS: ReadonlyArray<{ key: GoalKind; label: string; hint: string; example: string }> = [
   {
     key: "amount",
-    label: "An amount I build up",
-    hint: "Money saved, kilometres, pages, modules",
-    example: "Save UGX 3,000,000 by December",
+    label: "An amount I’m working toward",
+    hint: "Money saved, kilograms lost, kilometres, pages",
+    example: "Save UGX 3,000,000 · Lose 10 kg",
   },
   {
     key: "habit",
