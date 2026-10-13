@@ -57,6 +57,8 @@ export async function signUpWithPassword(_prev: SignInState, formData: FormData)
 
   const supabase = await createClient();
   const redirectTo = new URL("/auth/confirm", await siteOrigin());
+  // Always include a query string: the email templates append "&token_hash=…".
+  redirectTo.searchParams.set("next", safeNextPath(String(formData.get("next") ?? ""), "/onboarding"));
   const { data, error } = await supabase.auth.signUp({
     email: email.data,
     password,
