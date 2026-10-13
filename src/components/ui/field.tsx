@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "rea
 import { cn } from "@/lib/cn";
 
 const control =
-  "w-full rounded-xl border border-line bg-surface px-4 py-3 text-base text-ink placeholder:text-ink-muted/70 aria-invalid:border-below";
+  "w-full rounded-xl border border-line-strong bg-surface-muted px-4 py-3 text-base text-ink placeholder:text-ink-muted/80 hover:border-primary/50 aria-invalid:border-danger";
 
 type FieldShellProps = {
   id: string;
@@ -21,7 +21,7 @@ export function Field({ id, label, hint, error, children }: FieldShellProps) {
       </label>
       {children}
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-below">
+        <p id={`${id}-error`} className="text-sm text-danger">
           {error}
         </p>
       ) : hint ? (

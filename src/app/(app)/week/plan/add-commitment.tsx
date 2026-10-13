@@ -99,7 +99,7 @@ export function AddCommitment({ goals, week, full }: { goals: PlanGoal[]; week: 
             </button>
           ))}
         </div>
-        {err.goal_id && <p className="text-sm text-below">{err.goal_id}</p>}
+        {err.goal_id && <p className="text-sm text-danger">{err.goal_id}</p>}
       </fieldset>
 
       {goal && (
@@ -172,7 +172,7 @@ export function AddCommitment({ goals, week, full }: { goals: PlanGoal[]; week: 
       )}
 
       {state.error && (
-        <p role="alert" className="text-sm text-below">
+        <p role="alert" className="text-sm text-danger">
           {state.error}
         </p>
       )}

@@ -1,72 +1,85 @@
 @import "tailwindcss";
 
 /*
-  Pakti design tokens. Bright and encouraging, never alarming: warm cream
-  background, fresh teal primary, coral and sunshine accents for moments of
-  joy. There is no red: "below" is a warm coral so a missed minimum reads as
-  information, not failure. Text colours keep WCAG AA contrast.
+  Pakti design tokens: Lavender & Midnight.
+  One dark theme, used on every screen. Components only use these tokens
+  (via the Tailwind names in @theme below), never raw colours.
+
+  - Lavender is the brand: primary actions, active states, progress.
+  - Status colours stay semantic and calm: success is green, "within
+    minimum" is amber, "below minimum" is a warm coral (information, never
+    alarm), and only real errors use the error colour.
+  - Text colours keep WCAG AA contrast on both the page and card surfaces.
 */
 :root {
-  --bg: #fff8ef;
-  --surface: #ffffff;
-  --surface-muted: #f7efe3;
-  --ink: #1d2433;
-  --ink-muted: #586176;
-  --line: #efe3d3;
-  --primary: #0b7a64;
-  --primary-ink: #ffffff;
-  --primary-soft: #dcf4ec;
-  --accent: #ff7a59;
-  --accent-soft: #ffe7de;
-  --sun: #ffc23d;
-  --sun-soft: #fff1cc;
-  --achieved: #10854f;
-  --within: #9a6a00;
-  --below: #c2532d;
-  --focus: #0b7a64;
-  color-scheme: light;
-}
+  /* Backgrounds and surfaces */
+  --bg: #11131f; /* Midnight: page */
+  --surface: #1d2032; /* Deep navy: cards, sheets, inputs */
+  --surface-muted: #262a40; /* Raised or recessed areas, tracks, chips */
+  --primary-deep: #2b2350; /* Deep purple: end of the Big Goal wash */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #12161f;
-    --surface: #1a2030;
-    --surface-muted: #232a3b;
-    --ink: #eef1f7;
-    --ink-muted: #a4adbf;
-    --line: #2c3446;
-    --primary: #4fd1ae;
-    --primary-ink: #06261e;
-    --primary-soft: #153a32;
-    --accent: #ff9478;
-    --accent-soft: #3a2420;
-    --sun: #ffd166;
-    --sun-soft: #3a3018;
-    --achieved: #5fdc98;
-    --within: #f2c24d;
-    --below: #ff9a73;
-    --focus: #4fd1ae;
-    color-scheme: dark;
-  }
+  /* Text */
+  --ink: #f5f3ff; /* Soft white */
+  --ink-muted: #a5a7b8; /* Muted grey */
+
+  /* Borders */
+  --line: rgb(196 181 253 / 0.12);
+  --line-strong: rgb(196 181 253 / 0.26);
+
+  /* Actions and active states */
+  --primary: #a78bfa; /* Soft lavender */
+  --primary-hover: #b9a3fb;
+  --primary-ink: #11131f; /* Text on lavender */
+  --primary-soft: #2a2550; /* Selected and active backgrounds */
+  --accent: #c4b5fd; /* Light lavender: secondary accent */
+  --accent-soft: #252340;
+  --disabled: #3a3e56;
+  --focus: #c4b5fd;
+
+  /* Rewards: a muted gold, used sparingly */
+  --sun: #e9c46a;
+  --sun-soft: #2c2a2c;
+
+  /* Status */
+  --achieved: #6ee7b7; /* success */
+  --within: #f4c26b; /* warning: minimum reached */
+  --below: #f2a07b; /* below minimum: warm, never red */
+  --danger: #f87171; /* errors and destructive actions only */
+
+  /* Life capitals: muted markers, never competing with lavender actions */
+  --cap-spiritual: #e3c178;
+  --cap-financial: #7fd1b9;
+  --cap-intellectual: #8db4f0;
+  --cap-health: #f2a3a3;
+  --cap-family: #f0b98d;
+  --cap-career: #9fa8da;
+  --cap-contribution: #b7d98b;
+
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
+  --color-primary-deep: var(--primary-deep);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-ink: var(--primary-ink);
   --color-primary-soft: var(--primary-soft);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-disabled: var(--disabled);
   --color-sun: var(--sun);
   --color-sun-soft: var(--sun-soft);
   --color-achieved: var(--achieved);
   --color-within: var(--within);
   --color-below: var(--below);
+  --color-danger: var(--danger);
   --color-focus: var(--focus);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }

@@ -13,7 +13,7 @@ import { getEvidenceForLogs } from "@/lib/data/evidence";
 import { getGoal } from "@/lib/data/goals";
 import { getGoalWeekResults, getWeekPlan } from "@/lib/data/week";
 import { cn } from "@/lib/cn";
-import { capitalLabel } from "@/lib/domain/capitals";
+import { CapitalLabel, PrivacyNote } from "@/components/capital-label";
 import { addDays, quarterEnd, quarterLabel, quarterStart, weekEnd, weekStart } from "@/lib/domain/dates";
 import { formatAmount, formatDate, formatProgress } from "@/lib/domain/format";
 import { CHECKIN_STATUS_LABELS, totalFor, weeklyPace } from "@/lib/domain/goals";
@@ -98,15 +98,12 @@ async function GoalDetailView({
       </Link>
 
       <div>
-        <p className="text-sm text-ink-muted">
-          {goal.is_primary ? "My Big Goal · " : ""}
-          {capitalLabel(goal.capital)}
-        </p>
+        <CapitalLabel capital={goal.capital} prefix={goal.is_primary ? "My Big Goal · " : undefined} />
         <h1 className="mt-1 text-2xl font-semibold">{goal.title}</h1>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-3">
           {goal.status !== "active" && <Tag>{goal.status[0].toUpperCase() + goal.status.slice(1)}</Tag>}
-          <Tag>{goal.shared_with_partners ? "Shared with partners" : "Private"}</Tag>
           <Tag>By {formatDate(goal.target_date)}</Tag>
+          <PrivacyNote shared={goal.shared_with_partners} />
         </div>
       </div>
 
@@ -311,7 +308,7 @@ async function GoalDetailView({
         </form>
 
         {confirmDelete ? (
-          <form action={deleteGoal} className="flex flex-col gap-3 rounded-2xl border border-below/40 p-4">
+          <form action={deleteGoal} className="flex flex-col gap-3 rounded-2xl border border-danger/40 p-4">
             <input type="hidden" name="id" value={goal.id} />
             <input type="hidden" name="confirm" value="yes" />
             <p className="text-sm">

@@ -95,7 +95,7 @@ export function InstallHint() {
                 setPrompt(null);
                 setMode("hidden");
               }}
-              className="min-h-11 rounded-xl bg-primary px-4 text-sm font-medium text-primary-ink hover:opacity-90"
+              className="min-h-11 rounded-xl bg-primary px-4 text-sm font-medium text-primary-ink hover:bg-primary-hover"
             >
               Install Pakti
             </button>

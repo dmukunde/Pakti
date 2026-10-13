@@ -22,7 +22,7 @@ export function Chip({
       className={cn(
         base,
         "min-h-11 transition-colors",
-        selected ? "border-primary bg-primary-soft text-ink" : "border-line bg-surface text-ink-muted hover:bg-surface-muted",
+        selected ? "border-primary bg-primary-soft text-ink" : "border-line-strong bg-surface text-ink-muted hover:bg-surface-muted hover:text-ink",
         className,
       )}
       {...props}

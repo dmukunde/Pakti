@@ -4,9 +4,9 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 
-const SAGE = "#0b7a64"; // teal
-const PAPER = "#fff8ef";
-const WARM = "#ff7a59"; // coral
+const SAGE = "#a78bfa"; // lavender tile
+const PAPER = "#11131f"; // midnight ring
+const WARM = "#f5f3ff"; // soft-white restart dot
 
 // A three-quarter progress ring with a warm dot where it begins: progress,
 // consistency, and the point you restart from.

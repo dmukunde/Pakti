@@ -96,7 +96,7 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
             </Chip>
           ))}
         </div>
-        {err.capital && <p className="text-sm text-below">{err.capital}</p>}
+        {err.capital && <p className="text-sm text-danger">{err.capital}</p>}
       </fieldset>
 
       {/* 2. Name */}
@@ -127,7 +127,7 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
             </button>
           ))}
         </div>
-        {err.kind && <p className="text-sm text-below">{err.kind}</p>}
+        {err.kind && <p className="text-sm text-danger">{err.kind}</p>}
       </fieldset>
 
       {/* 4. Kind-specific measures */}
@@ -150,7 +150,7 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
           {/* Phones rarely show datalist suggestions, so offer quick picks too. */}
           <div className="col-span-2 -mt-1 flex flex-wrap gap-2" aria-label="Common units">
             {["UGX", "kg", "km", "pages", "modules"].map((u) => (
-              <Chip key={u} selected={unit === u} onClick={() => setUnit(u)} className="min-h-9">
+              <Chip key={u} selected={unit === u} onClick={() => setUnit(u)}>
                 {u}
               </Chip>
             ))}
@@ -260,7 +260,7 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
       </details>
 
       {state.error && (
-        <p role="alert" className="text-sm text-below">
+        <p role="alert" className="text-sm text-danger">
           {state.error}
         </p>
       )}

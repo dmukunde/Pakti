@@ -25,7 +25,7 @@ function NavTabs({ pathname }: { pathname: string }) {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:static sm:border-t-0 sm:bg-transparent sm:pb-0"
+      className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:static sm:border-t-0 sm:bg-transparent sm:pb-0"
     >
       <ul className="mx-auto flex max-w-md">
         {TABS.map(({ href, label, icon: Icon }) => {
@@ -40,7 +40,7 @@ function NavTabs({ pathname }: { pathname: string }) {
                   active ? "text-primary" : "text-ink-muted hover:text-ink",
                 )}
               >
-                <span className={cn("grid h-8 w-14 place-items-center rounded-full transition-colors sm:h-auto sm:w-auto", active && "bg-primary-soft sm:bg-transparent")}>
+                <span className={cn("grid h-8 w-14 place-items-center rounded-full transition-colors sm:h-auto sm:w-auto", active && "bg-primary-soft text-primary sm:bg-transparent")}>
                   <Icon />
                 </span>
                 {label}

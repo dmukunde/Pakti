@@ -6,7 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Tag } from "@/components/ui/chip";
 import { requireOnboardedMember } from "@/lib/auth/current-member";
 import { listGoals, type GoalSummary } from "@/lib/data/goals";
-import { capitalLabel, LIFE_CAPITALS } from "@/lib/domain/capitals";
+import { LIFE_CAPITALS } from "@/lib/domain/capitals";
+import { CapitalLabel, PrivacyNote } from "@/components/capital-label";
 
 export const metadata: Metadata = { title: "Goals" };
 
@@ -17,7 +18,7 @@ export default function GoalsPage() {
         <h1 className="text-2xl font-semibold">Goals</h1>
         <Link
           href="/goals/new"
-          className="inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-ink hover:opacity-90"
+          className="inline-flex min-h-11 items-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-ink hover:bg-primary-hover"
         >
           Add goal
         </Link>
@@ -57,8 +58,8 @@ async function GoalList() {
       {big && <GoalCard goal={big} emphasis />}
       {groups.map((group) => (
         <section key={group.key} className="flex flex-col gap-3" aria-labelledby={`cap-${group.key}`}>
-          <h2 id={`cap-${group.key}`} className="text-sm font-medium text-ink-muted">
-            {group.label}
+          <h2 id={`cap-${group.key}`}>
+            <CapitalLabel capital={group.key} className="font-medium" />
           </h2>
           {group.goals.map((g) => (
             <GoalCard key={g.id} goal={g} />
@@ -71,10 +72,11 @@ async function GoalList() {
 
 function GoalCard({ goal, emphasis }: { goal: GoalSummary; emphasis?: boolean }) {
   return (
-    <Link href={`/goals/${goal.id}`} className="block rounded-2xl focus-visible:outline-offset-4">
+    <Link href={`/goals/${goal.id}`} aria-label={`${emphasis ? "My Big Goal: " : ""}${goal.title}`} className="block rounded-2xl focus-visible:outline-offset-4">
       <Card
         emphasis={emphasis}
-        eyebrow={emphasis ? `My Big Goal · ${capitalLabel(goal.capital)}` : undefined}
+        // Grouped cards sit under their life-area heading; only the Big Goal names its area.
+        eyebrow={emphasis ? <CapitalLabel capital={goal.capital} prefix="My Big Goal · " /> : undefined}
         title={goal.title}
         className="transition-colors hover:border-primary/40"
       >
@@ -86,10 +88,10 @@ function GoalCard({ goal, emphasis }: { goal: GoalSummary; emphasis?: boolean })
               {goal.milestoneReached ? " · reached" : ""}
             </p>
           )}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-3">
             {goal.status === "achieved" && <Tag>Achieved</Tag>}
             {goal.status === "paused" && <Tag>Paused</Tag>}
-            <Tag>{goal.shared_with_partners ? "Shared" : "Private"}</Tag>
+            <PrivacyNote shared={goal.shared_with_partners} />
           </div>
         </div>
       </Card>

@@ -108,7 +108,7 @@ export function OnboardingFlow({ initial }: { initial: Initial }) {
       )}
 
       {state.error && (
-        <p role="alert" className="text-sm text-below">
+        <p role="alert" className="text-sm text-danger">
           {state.error}
         </p>
       )}

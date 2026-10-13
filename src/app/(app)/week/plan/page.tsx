@@ -141,7 +141,7 @@ async function Plan({ searchParams }: { searchParams: PageProps<"/week/plan">["s
 
           <Link
             href="/week"
-            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:opacity-90"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:bg-primary-hover"
           >
             {count > 0 ? "Done planning" : "Back to This Week"}
           </Link>

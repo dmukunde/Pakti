@@ -63,7 +63,7 @@ export function LogProvider({ userId, today, commitments, goals, children }: Pro
     <LogContext value={openLog}>
       {children}
       {toast && (
-        <div role="status" className="fixed inset-x-4 bottom-24 z-30 mx-auto max-w-md rounded-2xl bg-ink px-4 py-3 text-sm text-bg shadow-lg sm:bottom-6">
+        <div role="status" className="fixed inset-x-4 bottom-[calc(6rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-md rounded-2xl bg-primary px-4 py-3 text-sm font-medium text-primary-ink shadow-lg sm:bottom-6">
           {toast}
         </div>
       )}
@@ -205,7 +205,7 @@ function LogForm({
       )}
 
       <Field id="log-date" label="When">
-        <select id="log-date" name="occurred_on" defaultValue={dates[0]} className="min-h-11 w-full rounded-xl border border-line bg-surface px-4 text-base">
+        <select id="log-date" name="occurred_on" defaultValue={dates[0]} className="min-h-11 w-full rounded-xl border border-line-strong bg-surface-muted px-4 text-base text-ink">
           {dates.map((d) => (
             <option key={d} value={d}>
               {dayLabel(d, today)}
@@ -230,14 +230,14 @@ function LogForm({
               multiple
               accept={EVIDENCE_ACCEPT}
               onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-              className="text-sm file:mr-3 file:min-h-11 file:rounded-xl file:border file:border-line file:bg-surface file:px-4 file:text-ink"
+              className="text-sm text-ink-muted file:mr-3 file:min-h-11 file:rounded-xl file:border file:border-line-strong file:bg-surface-muted file:px-4 file:text-ink"
             />
           </Field>
         </div>
       </details>
 
       {error && (
-        <p role="alert" className="text-sm text-below">
+        <p role="alert" className="text-sm text-danger">
           {error}
         </p>
       )}
@@ -278,11 +278,11 @@ export function LogButton() {
   return (
     <>
       {/* Room under the content so the floating button never covers the last card. */}
-      <div aria-hidden className="h-16" />
+      <div aria-hidden className="h-20" />
       <button
         type="button"
         onClick={() => openLog()}
-        className="fixed bottom-20 right-4 z-20 flex min-h-14 items-center gap-2 rounded-full bg-primary px-5 text-base font-semibold text-primary-ink shadow-lg hover:opacity-90 sm:bottom-8 sm:right-8"
+        className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-20 flex min-h-14 items-center gap-2 rounded-full bg-primary px-5 text-base font-semibold text-primary-ink shadow-lg shadow-black/40 hover:bg-primary-hover sm:bottom-8 sm:right-8"
       >
         <span aria-hidden className="text-xl leading-none">+</span> Log
       </button>

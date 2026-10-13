@@ -51,75 +51,93 @@ async function Partners({ searchParams }: { searchParams: PageProps<"/partners">
         </Card>
       )}
 
-      <section aria-labelledby="supports-me" className="flex flex-col gap-3">
-        <h2 id="supports-me" className="text-lg font-semibold">
-          Supporting you
-        </h2>
-        <p className="text-sm text-ink-muted">
+      <Card title="Supporting you">
+        <p className="text-ink-muted">
           Up to two people who see only the check-ins you choose to publish. Everything else stays private.
         </p>
-        {supportMe.map((p) => (
-          <div key={p.partnership_id} className="flex items-start justify-between gap-3 rounded-2xl border border-line bg-surface p-4">
-            <div>
-              <p className="font-medium">
-                {p.status === "active" ? p.other_display_name || "Your partner" : p.invite_label || p.invite_email || "Invite"}
-              </p>
-              <p className="text-sm text-ink-muted">
-                {p.status === "active"
-                  ? `Partner since ${formatDate((p.accepted_at ?? p.created_at).slice(0, 10))}`
-                  : `Invite waiting · expires ${formatDate((p.invite_expires_at ?? p.created_at).slice(0, 10))}`}
-              </p>
-            </div>
-            <form action={p.status === "active" ? endPartnership : cancelInvite}>
-              <input type="hidden" name="id" value={p.partnership_id} />
-              <Button type="submit" variant="quiet" className="px-3 text-sm text-ink-muted">
-                {p.status === "active" ? "End" : "Cancel"}
-              </Button>
-            </form>
+        {supportMe.length > 0 && (
+          <ul className="mt-4 flex flex-col divide-y divide-line border-y border-line">
+            {supportMe.map((p) => (
+              <li key={p.partnership_id} className="flex items-center justify-between gap-3 py-3">
+                <div>
+                  <p className="font-medium">
+                    {p.status === "active" ? p.other_display_name || "Your partner" : p.invite_label || p.invite_email || "Invite"}
+                  </p>
+                  <p className="text-sm text-ink-muted">
+                    {p.status === "active"
+                      ? `Partner since ${formatDate((p.accepted_at ?? p.created_at).slice(0, 10))}`
+                      : `Invite waiting · expires ${formatDate((p.invite_expires_at ?? p.created_at).slice(0, 10))}`}
+                  </p>
+                </div>
+                <form action={p.status === "active" ? endPartnership : cancelInvite}>
+                  <input type="hidden" name="id" value={p.partnership_id} />
+                  <Button type="submit" variant="quiet" className="px-3 text-sm text-ink-muted">
+                    {p.status === "active" ? "End" : "Cancel"}
+                  </Button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        )}
+        {!full && !newest && (
+          <div className="mt-4">
+            <InviteForm />
           </div>
-        ))}
-        {!full && !newest && <InviteForm />}
+        )}
         {supportMe.length === 0 && (
-          <p className="text-sm text-ink-muted">Accountability works best with someone in your corner.</p>
+          <p className="mt-3 text-sm text-ink-muted">Accountability works best with someone in your corner.</p>
         )}
-      </section>
+      </Card>
 
-      <section aria-labelledby="i-support" className="flex flex-col gap-3">
-        <h2 id="i-support" className="text-lg font-semibold">
-          You support
-        </h2>
+      <Card title="You support">
         {iSupport.length === 0 ? (
-          <p className="text-sm text-ink-muted">When someone invites you and you accept, they&apos;ll appear here.</p>
+          <p className="text-ink-muted">When someone invites you and you accept, they&apos;ll appear here.</p>
         ) : (
-          iSupport.map((p) => (
-            <div key={p.partnership_id} className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4">
-              <Link href={`/partners/${p.other_user_id}`} className="flex flex-1 flex-col">
-                <span className="font-medium">{p.other_display_name || "Member"}</span>
-                <span className="text-sm text-ink-muted">
-                  {latestBy.get(p.other_user_id!)
-                    ? `Latest check-in ${formatDate(latestBy.get(p.other_user_id!)!.slice(0, 10))}`
-                    : "No check-ins shared yet"}
-                </span>
-              </Link>
-              <form action={endPartnership}>
-                <input type="hidden" name="id" value={p.partnership_id} />
-                <Button type="submit" variant="quiet" className="px-3 text-sm text-ink-muted">
-                  Stop
-                </Button>
-              </form>
-            </div>
-          ))
+          <ul className="flex flex-col divide-y divide-line border-y border-line">
+            {iSupport.map((p) => (
+              <li key={p.partnership_id} className="flex items-center justify-between gap-3 py-3">
+                <Link href={`/partners/${p.other_user_id}`} className="flex min-h-11 flex-1 flex-col justify-center rounded-lg">
+                  <span className="font-medium text-primary">{p.other_display_name || "Member"}</span>
+                  <span className="text-sm text-ink-muted">
+                    {latestBy.get(p.other_user_id!)
+                      ? `Latest check-in ${formatDate(latestBy.get(p.other_user_id!)!.slice(0, 10))}`
+                      : "No check-ins shared yet"}
+                  </span>
+                </Link>
+                <form action={endPartnership}>
+                  <input type="hidden" name="id" value={p.partnership_id} />
+                  <Button type="submit" variant="quiet" className="px-3 text-sm text-ink-muted">
+                    Stop
+                  </Button>
+                </form>
+              </li>
+            ))}
+          </ul>
         )}
-      </section>
+      </Card>
 
-      <Card title="What partners can see">
-        <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-ink-muted">
+      <Card
+        eyebrow={
+          <span className="inline-flex items-center gap-2 text-accent">
+            <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="5" y="11" width="14" height="9" rx="2" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+            </svg>
+            Privacy
+          </span>
+        }
+        title="What partners can see"
+        className="border-line-strong"
+      >
+        <ul className="flex list-disc flex-col gap-2 pl-5 leading-relaxed text-ink">
           <li>Only check-ins you publish, frozen as you published them</li>
           <li>Commitments you tick, and goals you mark as shared</li>
           <li>Amounts only for goals where you turn on “Show amounts”</li>
-          <li>Never: your logs, notes, evidence photos, vision or private goals</li>
+          <li>
+            <span className="font-medium">Never:</span> your logs, notes, evidence photos, vision or private goals
+          </li>
         </ul>
-        <p className="mt-2 text-sm text-ink-muted">Signed in as {member.displayName || "you"}.</p>
+        <p className="mt-3 text-sm text-ink-muted">Signed in as {member.displayName || "you"}.</p>
       </Card>
     </>
   );

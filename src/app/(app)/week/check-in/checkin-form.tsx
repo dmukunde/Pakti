@@ -149,7 +149,7 @@ export function CheckinForm(props: Props) {
       )}
 
       {state.error && (
-        <p role="alert" className="text-sm text-below">
+        <p role="alert" className="text-sm text-danger">
           {state.error}
         </p>
       )}

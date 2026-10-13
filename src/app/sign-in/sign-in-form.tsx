@@ -44,6 +44,14 @@ export function SignInForm({ searchParams }: { searchParams: SearchParams }) {
             ? `If there's an account for ${state.email}, we've sent a link to set a new password.`
             : `We sent a link to ${state.email}. It works once and expires in an hour.`}
         </p>
+        <p className="mt-3 text-sm text-ink-muted">
+          Using Pakti from your home screen? The email link opens in your browser, so after setting your password, come
+          back here and sign in with it.
+        </p>
+        {/* A plain link (full reload) resets this message and the form. */}
+        <a href="/sign-in" className="mt-3 inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline">
+          Back to sign in
+        </a>
       </div>
     );
   }

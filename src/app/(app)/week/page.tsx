@@ -10,7 +10,7 @@ import { requireOnboardedMember } from "@/lib/auth/current-member";
 import { listGoals, type GoalSummary } from "@/lib/data/goals";
 import { getPartnerCheckins, getPartnerships, getWeeklyReflection } from "@/lib/data/checkins";
 import { getWeekPlan } from "@/lib/data/week";
-import { capitalLabel } from "@/lib/domain/capitals";
+import { CapitalLabel } from "@/components/capital-label";
 import { addDays, weekEnd, weekStart } from "@/lib/domain/dates";
 import { formatDate, formatProgress } from "@/lib/domain/format";
 import { isRecoveryWeek, weekStateLine } from "@/lib/domain/week";
@@ -96,7 +96,7 @@ async function ThisWeek() {
           <p className="text-ink-muted">A few honest lines: wins, challenges, what you learned.</p>
           <Link
             href={checkInLastWeek ? "/week/check-in?week=last" : "/week/check-in"}
-            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:opacity-90"
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:bg-primary-hover"
           >
             Check in
           </Link>
@@ -119,8 +119,8 @@ async function ThisWeek() {
       )}
 
       {big ? (
-        <Link href={`/goals/${big.id}`} className="block rounded-2xl">
-          <Card emphasis eyebrow={`My Big Goal · ${capitalLabel(big.capital)}`} title={big.title}>
+        <Link href={`/goals/${big.id}`} aria-label={`My Big Goal: ${big.title}`} className="block rounded-2xl">
+          <Card emphasis eyebrow={<CapitalLabel capital={big.capital} prefix="My Big Goal · " />} title={big.title}>
             <div className="flex flex-col gap-3">
               <GoalProgress goal={big} />
               {big.milestone && (
@@ -156,7 +156,7 @@ async function ThisWeek() {
             <p className="text-ink-muted">Choose a few commitments that move your goals forward. Three is a strong week.</p>
             <Link
               href="/week/plan"
-              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:opacity-90"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:bg-primary-hover"
             >
               Plan my week
             </Link>
@@ -248,7 +248,8 @@ async function ThisWeek() {
       )}
 
       <InstallHint />
-      {goals.length > 0 && <LogButton />}
+      {/* Only once there is a plan, so it never covers "Plan my week". */}
+      {plan.tally.total > 0 && <LogButton />}
     </LogProvider>
   );
 }

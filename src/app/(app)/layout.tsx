@@ -8,7 +8,7 @@ import { Logo } from "@/components/brand/logo";
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      <header className="mx-auto flex w-full max-w-md items-center justify-between px-5 pt-5">
+      <header className="mx-auto flex w-full max-w-md items-center justify-between px-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
         <Link href="/week" aria-label="Pakti, This Week" className="rounded-xl">
           <Logo />
         </Link>
@@ -23,7 +23,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
           <AppNav />
         </Suspense>
       </div>
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-5 pb-28 pt-4 sm:pb-12">{children}</main>
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-5 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-4 sm:pb-12">{children}</main>
     </div>
   );
 }

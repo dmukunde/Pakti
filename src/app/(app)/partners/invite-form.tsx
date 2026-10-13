@@ -23,7 +23,7 @@ export function InviteForm({ suggestedLabel }: { suggestedLabel?: string }) {
             href={`https://wa.me/?text=${encodeURIComponent(message)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-ink hover:opacity-90"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-medium text-primary-ink hover:bg-primary-hover"
           >
             Send on WhatsApp
           </a>
@@ -48,14 +48,14 @@ export function InviteForm({ suggestedLabel }: { suggestedLabel?: string }) {
 
   if (!open) {
     return (
-      <Button block variant="secondary" onClick={() => setOpen(true)}>
-        Invite a partner
+      <Button block onClick={() => setOpen(true)}>
+        <span aria-hidden className="text-xl leading-none">+</span> Invite a partner
       </Button>
     );
   }
 
   return (
-    <form action={action} className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4">
+    <form action={action} className="flex flex-col gap-4 rounded-2xl border border-line-strong bg-surface-muted/40 p-4">
       <Field id="inv-label" label="Who is it for?" hint="Just so you remember — e.g. Grace.">
         <Input id="inv-label" name="label" maxLength={80} defaultValue={suggestedLabel} />
       </Field>
@@ -63,7 +63,7 @@ export function InviteForm({ suggestedLabel }: { suggestedLabel?: string }) {
         <Input id="inv-email" name="email" type="email" inputMode="email" autoComplete="off" />
       </Field>
       {state.error && (
-        <p role="alert" className="text-sm text-below">
+        <p role="alert" className="text-sm text-danger">
           {state.error}
         </p>
       )}

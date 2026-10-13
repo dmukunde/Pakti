@@ -29,7 +29,7 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="m-0 mt-auto w-full max-w-none rounded-t-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/40 sm:m-auto sm:max-w-lg sm:rounded-3xl"
+      className="m-0 mt-auto w-full max-w-none rounded-t-3xl border border-line bg-surface p-0 text-ink backdrop:bg-black/60 sm:m-auto sm:max-w-lg sm:rounded-3xl"
     >
       <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
         <div className="mb-4 flex items-center justify-between">

@@ -16,6 +16,11 @@ export function capitalLabel(key: LifeCapital): string {
   return LIFE_CAPITALS.find((c) => c.key === key)?.label ?? key;
 }
 
+/** CSS variable holding this capital's muted marker colour (see globals.css). */
+export function capitalColorVar(key: LifeCapital): string {
+  return `var(--cap-${key})`;
+}
+
 export function isLifeCapital(value: string): value is LifeCapital {
   return LIFE_CAPITALS.some((c) => c.key === value);
 }

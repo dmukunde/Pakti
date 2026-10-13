@@ -17,9 +17,9 @@ export function Card({ title, eyebrow, emphasis, reward, className, children, ..
       className={cn(
         "rounded-2xl border p-5",
         emphasis
-          ? "border-primary/25 bg-gradient-to-br from-primary-soft via-surface to-sun-soft"
+          ? "border-primary/30 bg-gradient-to-br from-surface to-primary-deep"
           : reward
-            ? "border-sun/50 bg-gradient-to-br from-sun-soft to-accent-soft"
+            ? "border-sun/30 bg-surface"
             : "border-line bg-surface",
         className,
       )}

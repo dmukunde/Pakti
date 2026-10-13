@@ -36,7 +36,7 @@ export function CommitmentList({ items, weekEnded }: { items: CommitmentItem[]; 
             className={cn(
               "flex w-full flex-col gap-2 rounded-2xl border p-4 text-left transition-colors hover:border-primary/40",
               c.result === "achieved"
-                ? "border-achieved/30 bg-gradient-to-br from-primary-soft to-sun-soft"
+                ? "border-achieved/35 bg-surface"
                 : "border-line bg-surface",
             )}
             aria-label={`${c.title}. ${c.label}. Tap to log progress.`}
@@ -48,7 +48,7 @@ export function CommitmentList({ items, weekEnded }: { items: CommitmentItem[]; 
                   aria-hidden
                   className={cn(
                     "mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border text-sm",
-                    c.result === "achieved" ? "border-achieved bg-achieved text-surface" : "border-line",
+                    c.result === "achieved" ? "border-achieved bg-achieved text-bg" : "border-line-strong",
                   )}
                 >
                   {c.result === "achieved" ? "✓" : ""}

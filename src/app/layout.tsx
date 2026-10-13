@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "Progress, consistency, learning and restarting — not perfection.",
   applicationName: "Pakti",
   // iPhone "Add to Home Screen": open full screen with Pakti's name.
-  appleWebApp: { capable: true, title: "Pakti", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Pakti", statusBarStyle: "black" },
   formatDetection: { telephone: false },
 };
 
@@ -21,10 +21,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fff8ef" },
-    { media: "(prefers-color-scheme: dark)", color: "#12161f" },
-  ],
+  // Midnight, matching --bg, so the phone status bar blends into the app.
+  themeColor: "#11131f",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

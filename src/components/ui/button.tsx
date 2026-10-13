@@ -4,8 +4,8 @@ import { cn } from "@/lib/cn";
 type Variant = "primary" | "secondary" | "quiet";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-primary-ink hover:opacity-90",
-  secondary: "border border-line bg-surface text-ink hover:bg-surface-muted",
+  primary: "bg-primary text-primary-ink hover:bg-primary-hover",
+  secondary: "border border-line-strong bg-surface text-ink hover:bg-surface-muted",
   quiet: "text-primary hover:bg-primary-soft",
 };
 
@@ -20,7 +20,7 @@ export function Button({ variant = "primary", block, className, type = "button",
     <button
       type={type}
       className={cn(
-        "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-base font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-base font-medium transition-colors disabled:cursor-not-allowed disabled:bg-disabled disabled:text-ink-muted",
         variants[variant],
         block && "w-full",
         className,

@@ -83,7 +83,7 @@ async function Invite({
         <div className="flex flex-col gap-3">
           <Link
             href={`/sign-in?mode=signup&next=${next}`}
-            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:opacity-90"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-primary px-5 font-medium text-primary-ink hover:bg-primary-hover"
           >
             Create a Pakti account
           </Link>
