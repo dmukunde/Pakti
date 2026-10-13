@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { GoalProgress } from "@/components/goal-progress";
+import { InstallHint } from "@/components/install-app";
 import { LogButton, LogProvider } from "@/components/log/log-provider";
 import { Card } from "@/components/ui/card";
 import { ProgressLine } from "@/components/ui/progress-line";
@@ -184,6 +185,7 @@ async function ThisWeek() {
         </Card>
       )}
 
+      <InstallHint />
       {goals.length > 0 && <LogButton />}
     </LogProvider>
   );

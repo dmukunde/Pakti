@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { InstallHint } from "@/components/install-app";
 
 export default function LandingPage() {
   return (
@@ -18,6 +19,7 @@ export default function LandingPage() {
       >
         Sign in
       </Link>
+      <InstallHint />
     </main>
   );
 }

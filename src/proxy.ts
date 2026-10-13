@@ -36,6 +36,7 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip static files and image optimisation.
-    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // Skip static files, image optimisation, the PWA manifest, icons and service worker.
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|icons/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
