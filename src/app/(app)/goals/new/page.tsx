@@ -38,7 +38,7 @@ async function NewGoal({ searchParams }: { searchParams: PageProps<"/goals/new">
         values={{
           capital: welcome ? member.focusCapitals[0] : undefined,
           title: "",
-          unit: "UGX",
+          unit: "",
           target_value: "",
           weekly_target: "",
           weekly_minimum: "",

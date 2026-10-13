@@ -186,9 +186,14 @@ export async function deleteGoal(formData: FormData) {
   const id = text(formData, "id");
   if (formData.get("confirm") !== "yes") redirect(`/goals/${id}?confirm=delete`);
   const supabase = await createClient();
-  // Cascades to milestones, commitments, logs and evidence rows. Once evidence
-  // uploads exist (weekly-loop phase), the goal's stored files must be removed
-  // here first, because deleting rows does not delete files.
+  // Cascades to milestones, commitments, logs and evidence rows. Deleting rows
+  // does not delete stored files, so remove the goal's evidence files first.
+  const { data: files } = await supabase
+    .from("evidence")
+    .select("storage_path, log:activity_logs!evidence_log_fk!inner(goal_id)")
+    .eq("log.goal_id", id);
+  const paths = (files ?? []).map((f) => f.storage_path);
+  if (paths.length) await supabase.storage.from("evidence").remove(paths);
   await supabase.from("goals").delete().eq("id", id);
   redirect("/goals");
 }

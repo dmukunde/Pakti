@@ -121,7 +121,11 @@ export function suggestedQuarterTarget(
   if (goal.kind !== "amount" || !goal.target_value) return null;
   const remaining = goal.target_value - actualBeforeQuarter;
   if (remaining <= 0) return null;
-  const raw = remaining / quartersRemaining(today, goal.target_date);
+  return tidyCeil(remaining / quartersRemaining(today, goal.target_date));
+}
+
+/** Round up to a tidy step for the number's size: 742,300 -> 750,000; 1,234 -> 1,300; 2.4 -> 3. */
+export function tidyCeil(raw: number): number {
   const step = raw >= 100000 ? 10000 : raw >= 1000 ? 100 : 1;
   return Math.ceil(raw / step) * step;
 }

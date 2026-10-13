@@ -3,19 +3,33 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { GoalProgress } from "@/components/goal-progress";
+import { LogGoalButton, LogProvider } from "@/components/log/log-provider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tag } from "@/components/ui/chip";
 import { ProgressLine } from "@/components/ui/progress-line";
 import { requireOnboardedMember } from "@/lib/auth/current-member";
+import { getEvidenceForLogs } from "@/lib/data/evidence";
 import { getGoal } from "@/lib/data/goals";
+import { getGoalCommitments, getWeekPlan } from "@/lib/data/week";
+import { cn } from "@/lib/cn";
 import { capitalLabel } from "@/lib/domain/capitals";
-import { quarterLabel, quarterStart } from "@/lib/domain/dates";
+import { addDays, quarterEnd, quarterLabel, quarterStart, weekEnd, weekStart } from "@/lib/domain/dates";
 import { formatAmount, formatDate, formatProgress } from "@/lib/domain/format";
-import { CHECKIN_STATUS_LABELS, weeklyPace } from "@/lib/domain/goals";
+import { CHECKIN_STATUS_LABELS, totalFor, weeklyPace } from "@/lib/domain/goals";
+import { focusDot, habitWeekResult, type FocusDot } from "@/lib/domain/week";
+import { deleteLog } from "../../log-actions";
 import { deleteGoal, setGoalStatus, setMilestoneAchieved } from "../actions";
 
 export const metadata: Metadata = { title: "Goal" };
+
+const DOT_LABELS: Record<FocusDot, string> = {
+  kept: "kept",
+  some: "partly kept",
+  missed: "below minimum",
+  not_in_focus: "not in focus",
+  upcoming: "still to come",
+};
 
 export default function GoalPage({ params, searchParams }: PageProps<"/goals/[id]">) {
   return (
@@ -39,10 +53,46 @@ async function GoalDetailView({
   if (!goal) notFound();
 
   const pace = goal.status === "active" ? weeklyPace(goal, goal.yearActual, member.today) : null;
-  const qLabel = quarterLabel(quarterStart(member.today));
+  const qStart = quarterStart(member.today);
+  const qLabel = quarterLabel(qStart);
+  const currentWeek = weekStart(member.today);
+
+  // Weeks of this quarter, Monday-keyed, for the focus dots.
+  const weeks: string[] = [];
+  for (let w = weekStart(qStart); w <= quarterEnd(qStart); w = addDays(w, 7)) weeks.push(w);
+  const [plan, focus, evidence] = await Promise.all([
+    getWeekPlan(currentWeek, member.today),
+    getGoalCommitments(goal.id, weeks[0], weeks[weeks.length - 1]),
+    getEvidenceForLogs(goal.recentLogs.map((l) => l.id)),
+  ]);
+  const dots = weeks.map((w) => ({ week: w, dot: focusDot(w, currentWeek, focus.commitments, focus.logs) }));
+
+  // Habits: consistency over completed weeks that were in focus (never a streak).
+  const focusWeeks = dots.filter((d) => d.week < currentWeek && d.dot !== "not_in_focus" && d.dot !== "upcoming");
+  const keptHabitWeeks =
+    goal.kind === "habit" && goal.weekly_target
+      ? focusWeeks.filter(
+          (d) => habitWeekResult(totalFor(goal, goal.logs, d.week, weekEnd(d.week)), goal.weekly_target!, goal.weekly_minimum) !== "below",
+        ).length
+      : 0;
 
   return (
-    <>
+    <LogProvider
+      userId={member.id}
+      today={member.today}
+      goals={[{ id: goal.id, title: goal.title, kind: goal.kind, unit: goal.unit }]}
+      commitments={plan.commitments
+        .filter((c) => c.goal_id === goal.id)
+        .map((c) => ({
+          id: c.id,
+          title: c.title,
+          goal_id: c.goal_id,
+          goalTitle: c.goal.title,
+          week_start: c.week_start,
+          measure: c.measure,
+          displayUnit: c.displayUnit,
+        }))}
+    >
       <Link href="/goals" className="inline-flex min-h-11 items-center text-sm text-primary">
         ← Goals
       </Link>
@@ -70,6 +120,36 @@ async function GoalDetailView({
           )}
           {goal.reward && <p className="text-sm text-ink-muted">Reward waiting: {goal.reward}</p>}
         </div>
+      </Card>
+
+      {goal.status === "active" && <LogGoalButton goalId={goal.id} />}
+
+      <Card title={`Weeks in focus · ${qLabel}`}>
+        <ol className="flex flex-wrap gap-2" aria-label="Weeks this quarter">
+          {dots.map(({ week, dot }) => (
+            <li key={week}>
+              <span
+                title={`Week of ${formatDate(week)}: ${DOT_LABELS[dot]}`}
+                aria-label={`Week of ${formatDate(week)}: ${DOT_LABELS[dot]}`}
+                className={cn(
+                  "block size-4 rounded-full border",
+                  dot === "kept" && "border-achieved bg-achieved",
+                  dot === "some" && "border-within bg-within",
+                  dot === "missed" && "border-below bg-transparent",
+                  dot === "not_in_focus" && "border-line bg-surface-muted",
+                  dot === "upcoming" && "border-dashed border-line bg-transparent",
+                  week === currentWeek && "ring-2 ring-primary/40 ring-offset-2 ring-offset-surface",
+                )}
+              />
+            </li>
+          ))}
+        </ol>
+        <p className="mt-3 text-sm text-ink-muted">
+          {goal.kind === "habit" && focusWeeks.length > 0
+            ? `${keptHabitWeeks} of ${focusWeeks.length} focus weeks kept. `
+            : ""}
+          Filled: kept · Ochre: partly · Outline: below · Grey: not in focus, which is fine.
+        </p>
       </Card>
 
       <Card title={`This quarter · ${qLabel}`}>
@@ -158,13 +238,41 @@ async function GoalDetailView({
         ) : (
           <ul className="flex flex-col divide-y divide-line">
             {goal.recentLogs.map((l) => (
-              <li key={l.id} className="py-2">
-                <p className="text-sm text-ink-muted">{formatDate(l.occurred_on)}</p>
-                <p>
-                  {l.description ?? "Logged"}
-                  {l.amount !== null ? ` · ${formatAmount(l.amount, l.commitment_unit ?? goal.unit)}` : ""}
-                </p>
+              <li key={l.id} className="flex flex-col gap-1 py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm text-ink-muted">{formatDate(l.occurred_on)}</p>
+                    <p>
+                      {l.description ?? "Logged"}
+                      {l.amount !== null ? ` · ${formatAmount(l.amount, l.commitment_unit ?? goal.unit)}` : ""}
+                    </p>
+                  </div>
+                  <form action={deleteLog}>
+                    <input type="hidden" name="id" value={l.id} />
+                    <button type="submit" className="min-h-11 px-2 text-sm text-ink-muted hover:text-ink" aria-label="Remove this log">
+                      Remove
+                    </button>
+                  </form>
+                </div>
                 {l.note && <p className="text-sm text-ink-muted">{l.note}</p>}
+                {(evidence[l.id] ?? []).length > 0 && (
+                  <ul className="mt-1 flex flex-wrap gap-2" aria-label="Evidence (private)">
+                    {evidence[l.id].map((e) => (
+                      <li key={e.path}>
+                        <a href={e.url} target="_blank" rel="noopener noreferrer" className="block">
+                          {e.mime.startsWith("image/") && e.mime !== "image/heic" ? (
+                            // eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL, not optimisable
+                            <img src={e.url} alt="Evidence photo" className="size-16 rounded-lg border border-line object-cover" />
+                          ) : (
+                            <span className="grid size-16 place-items-center rounded-lg border border-line text-xs text-ink-muted">
+                              {e.mime === "application/pdf" ? "PDF" : "File"}
+                            </span>
+                          )}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
@@ -226,6 +334,6 @@ async function GoalDetailView({
           </form>
         )}
       </div>
-    </>
+    </LogProvider>
   );
 }

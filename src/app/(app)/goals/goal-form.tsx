@@ -46,7 +46,7 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
   const [state, action, pending] = useActionState<GoalFormState, FormData>(saveGoal, {});
   const [capital, setCapital] = useState<LifeCapital | undefined>(values.capital);
   const [kind, setKind] = useState<GoalKind | undefined>(values.kind);
-  const [unit, setUnit] = useState(values.unit);
+  const [unit, setUnit] = useState(values.unit || "UGX");
   const [target, setTarget] = useState(values.target_value);
   const [targetDate, setTargetDate] = useState(values.target_date);
   const [shared, setShared] = useState(values.shared_with_partners);
@@ -169,7 +169,7 @@ export function GoalForm({ values, today, quarterLabel, actualBeforeQuarter, wel
                 <Input id="g-yearly" name="target_value" inputMode="decimal" defaultValue={v.target_value} />
               </Field>
               <Field id="g-hunit" label="Unit">
-                <Input id="g-hunit" name="unit" defaultValue={v.unit} placeholder="sessions" maxLength={30} />
+                <Input id="g-hunit" name="unit" defaultValue={v.kind === "habit" ? v.unit : ""} placeholder="sessions" maxLength={30} />
               </Field>
             </div>
           </details>
